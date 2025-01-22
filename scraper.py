@@ -35,14 +35,14 @@ def scrape_items():
                 price = "Price not found"
 
             if "Prismatic Evolutions" in product_name and product_name not in seen_products:
-                product_details.append((product_name, price))
+                product_name_short = product_name.replace("Prismatic Evolutions", "")
+                product_details.append((product_name_short, price))
                 seen_products.add(product_name)
 
         return product_details
     else:
         print(f"Incapable d'accéder à la page {URL} : {response.status_code}")
         return []
-# Example usage
 products = scrape_items()
-for product in products:
-    print(f'Product: {product[0]}, Price: {product[1]}')
+# for product in products:
+#     print(f'Product: {product[0]}, Price: {product[1]}')
