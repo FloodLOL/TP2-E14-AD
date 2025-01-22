@@ -1,24 +1,48 @@
-from enum import unique
 import requests
 from bs4 import BeautifulSoup
 
 URL = 'https://hobbysag.com/collections/nouveautes/pokemon'
+
 
 def scrape_items():
     response = requests.get(URL)
     if response.status_code == 200:
         soup = BeautifulSoup(response.content, 'html.parser')
 
-        items = soup.find_all('a', href=lambda href: href and '/products/' in href)
+        product_cards = soup.find_all('div', class_='card__content')
 
-        unique_items = set(item.text.strip() for item in items if "Prismatic Evolutions" in item.text)
+        product_details = []
+        
+        seen_products = set()
 
-        stripped_items = [item.replace("Prismatic Evolutions","").strip() for item in unique_items]
+        for card in product_cards:
 
-        return stripped_items
+            name = card.find('h3', class_='card__heading')
+            if name:
+                product_name = name.text.strip()
+            else:
+                product_name = "Unknown Product"
+
+            regular_price_tag = card.find_next('span', class_='price-item--regular')
+
+            sale_price_tag = card.find_next('span', class_='price-item--sale')
+
+            if sale_price_tag:
+                price = sale_price_tag.text.strip()
+            elif regular_price_tag:
+                price = regular_price_tag.text.strip()
+            else:
+                price = "Price not found"
+
+            if "Prismatic Evolutions" in product_name and product_name not in seen_products:
+                product_details.append((product_name, price))
+                seen_products.add(product_name)
+
+        return product_details
     else:
         print(f"Incapable d'accéder à la page {URL} : {response.status_code}")
         return []
-
-# products = scrape_items()
-# print(products)
+# Example usage
+products = scrape_items()
+for product in products:
+    print(f'Product: {product[0]}, Price: {product[1]}')
