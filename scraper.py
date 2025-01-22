@@ -18,5 +18,5 @@ def scrape_items():
         print(f"Incapable d'accéder à la page {URL} : {response.status_code}")
         return []
 
-products = scrape_items()
-print(products)
+# products = scrape_items()
+# print(products)
