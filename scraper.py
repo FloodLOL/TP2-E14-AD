@@ -11,9 +11,11 @@ def scrape_items():
 
         items = soup.find_all('a', href=lambda href: href and '/products/' in href)
 
-        unique_items = set(item.text.strip() for item in items)
+        unique_items = set(item.text.strip() for item in items if "Prismatic Evolutions" in item.text)
 
-        return list(unique_items)
+        stripped_items = [item.replace("Prismatic Evolutions","").strip() for item in unique_items]
+
+        return stripped_items
     else:
         print(f"Incapable d'accéder à la page {URL} : {response.status_code}")
         return []
